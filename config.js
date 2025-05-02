@@ -4,5 +4,5 @@ module.exports = {
     DB_USER: process.env.DB_USER || 'postgres',
     DB_PASSWORD: process.env.DB_PASSWORD || 'aRUlyEHQXxYYZLvpVqlpuckDSTIJGSzY',
     DB_NAME: process.env.DB_NAME || 'railway',
-    DB_PORT: process.env.DB_PORT || '32604'
+    DB_PORT: process.env.DB_PORT || 32604
 };

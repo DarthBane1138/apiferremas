@@ -7,7 +7,11 @@ app.use(express.json());
 app.use(cors())
 
 // Acá se van a configurar las rutas referenciando a carpeta routes
-//app.use("/apiferremas/nombre", require("./routes/nombre.js"));
+
+// Ruta para endpoints productos
+app.use("/apiferremas/productos", require("./routes/productos.js"));
+// Rutas para endpoints sucursales
+app.use("/apiferremas/sucursales", require("./routes/sucursales.js"));
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
