@@ -76,8 +76,17 @@ router.post('/stock_categoria_sucursal', async (req, res) => {
 
   const { id_sucursal, id_categoria } = req.body;
 
-  if (!id_sucursal || !id_categoria) {
-    return res.status(400).json({ error: 'Faltan parámetros: id_sucursal y id_categoria son requeridos.' });
+  // Validación de parámetros vacíos o nulos
+  if (!id_sucursal && !id_categoria) {
+    return res.status(400).json({ status: 'error', mensaje: 'Faltan los parámetros "id_sucursal" y "id_categoria".' });
+  }
+
+  if (!id_sucursal) {
+    return res.status(400).json({ status: 'error', mensaje: 'El parámetro "id_sucursal" es requerido.' });
+  }
+
+  if (!id_categoria) {
+    return res.status(400).json({ status: 'error', mensaje: 'El parámetro "id_categoria" es requerido.' });
   }
 
   try {
@@ -85,16 +94,25 @@ router.post('/stock_categoria_sucursal', async (req, res) => {
       'SELECT * FROM fn_obtener_stock_sucursal_categoria($1, $2)',
       [id_sucursal, id_categoria]
     );
-    res.json(result.rows);
+
+    // Si la función devuelve un arreglo vacío
+    if (result.rows.length === 0) {
+      return res.status(404).json({ status: 'error', mensaje: 'No se encontraron productos para la sucursal y categoría especificadas.' });
+    }
+
+    // Todo bien
+    res.status(200).json({ status: 'ok', datos: result.rows });
+
   } catch (err) {
     console.error('Error al consultar stock por sucursal y categoría:', err);
 
     if (err.code === 'P0001') {
-      // Código para RAISE EXCEPTION en PL/pgSQL
-      return res.status(400).json({ error: err.message });
+      // Este es el código para RAISE EXCEPTION en PostgreSQL
+      return res.status(400).json({ status: 'error', mensaje: err.message });
     }
 
-    res.status(500).json({ error: 'Error interno al obtener stock.' });
+    // Otro error no manejado
+    res.status(500).json({ status: 'error', mensaje: 'Error interno al obtener el stock.' });
   }
 });
 
