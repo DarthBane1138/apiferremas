@@ -40,80 +40,107 @@ router.get('/categorias', async (req, res) => {
 
 // 03. GET: Obtener stock de una sucursal por su ID
 router.get('/stock_sucursal/:id', async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  
-    const sucursalId = parseInt(req.params.id, 10);
-  
-    if (isNaN(sucursalId)) {
-      return res.status(400).json({ error: 'ID de sucursal inválido.' });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  const sucursalId = parseInt(req.params.id, 10);
+
+  if (isNaN(sucursalId)) {
+    return res.status(400).json({ error: 'ID de sucursal inválido.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM fn_obtener_stock_sucursal($1)',
+      [sucursalId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        mensaje: 'No se encontró stock para la sucursal indicada o la sucursal no existe.'
+      });
     }
-  
-    try {
-      const result = await pool.query(
-        'SELECT * FROM fn_obtener_stock_sucursal($1)',
-        [sucursalId]
-      );
-      res.json(result.rows);
-    } catch (err) {
-      console.error('Error al obtener stock por sucursal:', err);
-      res.status(500).json({ error: 'Error al consultar stock por sucursal.' });
-    }
-  });
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al obtener stock por sucursal:', err);
+    res.status(500).json({ error: 'Error al consultar stock por sucursal.' });
+  }
+});
 
 // 04. POST: Obtener stock por sucursal y categoría
 router.post('/stock_categoria_sucursal', async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  
-    const { id_sucursal, id_categoria } = req.body;
-  
-    if (!id_sucursal || !id_categoria) {
-      return res.status(400).json({ error: 'Faltan parámetros: id_sucursal y id_categoria son requeridos.' });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  const { id_sucursal, id_categoria } = req.body;
+
+  if (!id_sucursal || !id_categoria) {
+    return res.status(400).json({ error: 'Faltan parámetros: id_sucursal y id_categoria son requeridos.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM fn_obtener_stock_sucursal_categoria($1, $2)',
+      [id_sucursal, id_categoria]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error al consultar stock por sucursal y categoría:', err);
+
+    if (err.code === 'P0001') {
+      // Código para RAISE EXCEPTION en PL/pgSQL
+      return res.status(400).json({ error: err.message });
     }
-  
-    try {
-      const result = await pool.query(
-        'SELECT * FROM fn_obtener_stock_sucursal_categoria($1, $2)',
-        [id_sucursal, id_categoria]
-      );
-      res.json(result.rows);
-    } catch (err) {
-      console.error('Error al consultar stock por sucursal y categoría:', err);
-      res.status(500).json({ error: 'Error interno al obtener stock.' });
-    }
-  });
+
+    res.status(500).json({ error: 'Error interno al obtener stock.' });
+  }
+});
 
 
 // 05. GET: Obtener información de un producto y su historial de precios
 router.get('/producto_info/:id', async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  
-    const id_producto = parseInt(req.params.id, 10);
-  
-    if (isNaN(id_producto)) {
-      return res.status(400).json({ error: 'El parámetro id del producto debe ser un número válido.' });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  const id_producto = parseInt(req.params.id, 10);
+
+  if (isNaN(id_producto)) {
+    return res.status(400).json({
+      status: 'error',
+      mensaje: 'El parámetro id del producto debe ser un número válido.'
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT * FROM fn_obtener_producto($1)',
+      [id_producto]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        status: 'error',
+        mensaje: `No se encontró información para el producto con ID ${id_producto}.`
+      });
     }
-  
-    try {
-      const result = await pool.query(
-        'SELECT * FROM fn_obtener_producto($1)',
-        [id_producto]
-      );
-  
-      // Formatear la fecha a 'YYYY-MM-DD'
-      const formattedRows = result.rows.map(row => ({
-        ...row,
-        fecha: row.fecha ? new Date(row.fecha).toISOString().split('T')[0] : null
-      }));
-  
-      res.json(formattedRows);
-    } catch (err) {
-      console.error('Error al consultar información del producto:', err);
-      res.status(500).json({ error: 'Error interno al consultar el producto.' });
-    }
-  });
+
+    res.json({
+      status: 'ok',
+      datos: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error('Error al consultar información del producto:', err);
+
+    return res.status(500).json({
+      status: 'error',
+      mensaje: 'Ocurrió un error interno al consultar el producto.',
+      detalle: err.message
+    });
+  }
+});
 
 
 app.use(router);
