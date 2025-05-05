@@ -16,7 +16,7 @@ router.get('/todos', async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     
     try {
-        const result = await pool.query(`SELECT * FROM producto`);
+        const result = await pool.query(`SELECT * FROM fn_obtener_productos()`);
         res.json(result.rows);
     } catch (err) {
         console.error('Error al consultar productos:', err);
