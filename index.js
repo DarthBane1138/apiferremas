@@ -18,9 +18,16 @@ app.use("/apiferremas/contacto", require("./routes/contacto.js"));
 app.use("/apiferremas/pedido", require("./routes/pedido.js"));
 
 // Nueva ruta para divisas
-app.use("/apiferremas/currency", require("./routes/divisa.js"));
+app.use("/apiferremas/currency", require("./routes/currency.js"));
+
 
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
     console.log(`http://localhost:${PORT}/apiferremas`); // No borrar pls
+});
+
+console.log("Variables cargadas:", {
+    user: process.env.BCENTRAL_USER,
+    db_name: process.env.DB_NAME,
+    pass: process.env.BCENTRAL_PASS ? "***" : "undefined"
 });
