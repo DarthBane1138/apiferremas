@@ -17,6 +17,9 @@ app.use("/apiferremas/contacto", require("./routes/contacto.js"));
 // Rutas para endpoints pedidos
 app.use("/apiferremas/pedido", require("./routes/pedido.js"));
 
+// Nueva ruta para divisas
+app.use("/apiferremas/currency", require("./routes/divisa.js"));
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en ${PORT}`);
     console.log(`http://localhost:${PORT}/apiferremas`); // No borrar pls
