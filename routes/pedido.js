@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Endpoints
 
-// POST: Crear un nuevo pedido con detalle de productos
+// 01. POST: Crear un nuevo pedido con detalle de productos
 router.post('/pedido_sucursal', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -22,13 +22,6 @@ router.post('/pedido_sucursal', async (req, res) => {
         return res.status(400).json({
             status: 'error',
             mensaje: 'El campo sucursal_id es obligatorio.'
-        });
-    }
-
-    if (!estado_pedido) {
-        return res.status(400).json({
-            status: 'error',
-            mensaje: 'El campo estado_pedido es obligatorio.'
         });
     }
 

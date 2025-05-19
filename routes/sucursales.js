@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 // Endpoints
 
-// 01. GET - Obtención de todas las sucursales
+// GET - Obtención de todas las sucursales
 router.get('/todas', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

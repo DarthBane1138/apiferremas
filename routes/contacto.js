@@ -8,9 +8,13 @@ const bodyParser = require('body-parser');
 app.use(express.json())
 app.use(bodyParser.json());
 
-// Endpoints
+/*
+Endpoints
+- POST: Insertar un nuevo mensaje de contacto desde un formulario
+- GET - Obtención de solicitudes de contacto
+*/
 
-// 01. POST: Insertar un nuevo mensaje de contacto desde un formulario
+// POST: Insertar un nuevo mensaje de contacto desde un formulario
 router.post('/contacto', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -60,7 +64,7 @@ router.post('/contacto', async (req, res) => {
     }
   });
 
-// 02. GET - Obtención de solicitudes de contacto
+// GET - Obtención de solicitudes de contacto
 router.get('/todos', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');

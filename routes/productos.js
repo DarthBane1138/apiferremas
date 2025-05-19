@@ -7,10 +7,15 @@ const bodyParser = require('body-parser');
 
 app.use(express.json())
 app.use(bodyParser.json());
-
-// Endpoints
-
-// 01. GET - Obtención de productos
+/*
+Endpoints
+- GET - Obtención de productos
+- GET: Obtener todas las categorías de los productos
+- GET: Obtener stock de una sucursal por su ID
+- POST: Obtener stock por sucursal y categoría
+- GET: Obtener información de un producto y su historial de precios
+*/
+// GET - Obtención de productos
 router.get('/todos', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -24,7 +29,7 @@ router.get('/todos', async (req, res) => {
     }
 });
 
-// 02. GET: Obtener todas las categorías de los productos
+// GET: Obtener todas las categorías de los productos
 router.get('/categorias', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -38,7 +43,7 @@ router.get('/categorias', async (req, res) => {
     }
   });
 
-// 03. GET: Obtener stock de una sucursal por su ID
+// GET: Obtener stock de una sucursal por su ID
 router.get('/stock_sucursal/:id', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -69,7 +74,7 @@ router.get('/stock_sucursal/:id', async (req, res) => {
   }
 });
 
-// 04. POST: Obtener stock por sucursal y categoría
+// POST: Obtener stock por sucursal y categoría
 router.post('/stock_categoria_sucursal', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -116,8 +121,7 @@ router.post('/stock_categoria_sucursal', async (req, res) => {
   }
 });
 
-
-// 05. GET: Obtener información de un producto y su historial de precios
+// GET: Obtener información de un producto y su historial de precios
 router.get('/producto_info/:id', async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -159,7 +163,6 @@ router.get('/producto_info/:id', async (req, res) => {
     });
   }
 });
-
 
 app.use(router);
 module.exports = router

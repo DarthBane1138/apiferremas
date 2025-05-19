@@ -67,7 +67,6 @@ router.get('/exchange-rate', async (req, res) => {
   }
 });
 
-
 // routes/currency.js (o cualquier otro archivo de rutas)
 router.get('/debug-env', (req, res) => {
   res.json({
