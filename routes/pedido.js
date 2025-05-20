@@ -15,13 +15,13 @@ router.post('/pedido_sucursal', async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
 
-    const { sucursal_id, estado_pedido, productos } = req.body;
+    const { sucursal_id, productos } = req.body;
 
-    // Validación básica
-    if (!sucursal_id) {
+    // Validaciones
+    if (!sucursal_id || isNaN(parseInt(sucursal_id))) {
         return res.status(400).json({
             status: 'error',
-            mensaje: 'El campo sucursal_id es obligatorio.'
+            mensaje: 'El campo sucursal_id es obligatorio y debe ser numérico.'
         });
     }
 
@@ -34,8 +34,8 @@ router.post('/pedido_sucursal', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'SELECT fn_insertar_pedido_con_detalle($1, $2, $3)',
-            [sucursal_id, estado_pedido, JSON.stringify(productos)]
+            'SELECT fn_insertar_pedido_con_detalle($1, $2)',
+            [sucursal_id, JSON.stringify(productos)]
         );
 
         res.json({
